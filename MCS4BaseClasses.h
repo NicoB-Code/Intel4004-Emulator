@@ -10,7 +10,8 @@ using namespace std;
 #ifdef _RAM_SPLITOFF_
 class Intel4004Base;
 #endif
-//
+
+
 /**
  * Stackverwaltung für den Intel4004 Prozessor.
  * Angelegt als Zirkularspeicher (d.h. es wird überschrieben)
