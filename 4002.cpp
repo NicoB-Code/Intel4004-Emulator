@@ -1,14 +1,11 @@
-// Include local header files
-#include "4002.h"
+#include "4002.h" // local header
 
-// Include gloabl header files
-#include <cstring>
+#include <cstring> // global header
 
-// Declaring namespaces
-using namespace std;
+using namespace std; //namespace
 
 Intel4002::Intel4002(const uint32_t installedChips) : currentBank(BANK0), currentChip(CHIP0), currentNibbleAddress(0), RAM(nullptr), RAMStatus(nullptr), RAMPort(nullptr), INSTALLEDRAM(nullptr) {
-    // Initialize RAM, RAMStatus, RAMPort, INSTALLEDRAM
+    // RAM, STATUSRAM, RAMPORT, INSTALLEDRAM initiieren
     RAM = new uint4_t***[MAX_NUMBER_OF_BANKS]();
     RAMStatus = new uint4_t***[MAX_NUMBER_OF_BANKS]();
     RAMPort = new uint4_t*[MAX_NUMBER_OF_BANKS]();
