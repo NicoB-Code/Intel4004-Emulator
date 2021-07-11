@@ -1,7 +1,5 @@
 #include "4002.h" // local header
-
 #include <cstring> // global header
-
 using namespace std; //namespace
 
 Intel4002::Intel4002(const uint32_t installedChips) : currentBank(BANK0), currentChip(CHIP0), currentNibbleAddress(0), RAM(nullptr), RAMStatus(nullptr), RAMPort(nullptr), INSTALLEDRAM(nullptr) {
