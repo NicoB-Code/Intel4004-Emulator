@@ -1,8 +1,7 @@
-#include <4004_stack.h>
-#include <stack_base.h>
-#include <cstdint>
+#include "4004_stack.h" // local header
+#include <cstdint> // global header
 #include <cstring>
-using namespace std;
+using namespace std; // namespace
 
 Intel4004Stack::Intel4004Stack() :
 		position(0), count(0), stack(nullptr) {
@@ -22,28 +21,30 @@ Intel4004Stack::~Intel4004Stack() {
 }
 
 void Intel4004Stack::push(const UBankedAddress address) {
-	if (count < 0) {
-		count = position = 0;
-	} else if (count >= STACKSIZE) {
+	// if (count < 0) {
+	// 	count = position = 0;
+	// } else if (count >= STACKSIZE) {
+	if (count >= STACKSIZE) {
 
-		++count;
+	 	// ++count;
 		WarningCondition(EDirection::PUSH);
-		return;
+	// 	return;
 	}
 
 	stack[2] = stack[1];
 	stack[1] = stack[0];
 	stack[0] = address;
 
-	++position;
+	// ++position;
+	position = (position + 1) % 3;
 	++count;
 }
 
 UBankedAddress Intel4004Stack::pop() {
 	if (count < 1) {
-		--count;
+		// --count;
 		WarningCondition(EDirection::POP);
-		return 0;
+		//return 0;
 	}
 
 	auto ret = stack[0];
@@ -51,10 +52,11 @@ UBankedAddress Intel4004Stack::pop() {
 	//Positionen korrigieren (noch nicht so schoen, geht mit verkette Elemente besser)
 	stack[0] = stack[1];
 	stack[1] = stack[2];
-	stack[2] = 0;
+	stack[2] = ret;
 
-	if (position > 0)
-		--position;
+	position = ((position - 1) + 3) % 3;
+	// if (position > 0)
+	// 	--position;
 
 	--count;
 
@@ -98,7 +100,12 @@ void Intel4004Stack::WarningCondition(const EDirection) { /* Wird bei Unter/Übe
 #ifdef _UNITTEST_
 
 #define CATCH_CONFIG_FAST_COMPILE
-#include <catch.hpp>
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+	#include "..\inc\catch.hpp"
+#elif __unix__
+	#include "../inc/catch.hpp"
+#endif
 
 class MyStack: public Intel4004Stack {
 	bool reported_overflow, reported_underflow;
@@ -297,5 +304,5 @@ TEST_CASE("Stack") {
 		CHECK(stack.getReportedUnderflow());
 	}
 }
-#endif
+#endif 
 
