@@ -1,3 +1,4 @@
+// --------------- Autoren Emulator - Damion Häberle, Lukas Adrion, Nico Bayer, Maximilian Bucher
 #include "4004_stack.h" // local header
 #include <cstdint> // global header
 #include <cstring>
