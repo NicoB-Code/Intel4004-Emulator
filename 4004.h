@@ -1,3 +1,4 @@
+// --------------- Autoren Emulator - Damion Häberle, Lukas Adrion, Nico Bayer, Maximilian Bucher
 #ifndef _4004_h_
 #define _4004_h_
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) // local header
