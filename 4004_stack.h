@@ -8,13 +8,6 @@
 #endif
 #include <cstdint> // global header
 using namespace std; // namespace
-
-/**
- * Stackverwaltung für den Intel4004 Prozessor.
- * Angelegt als Zirkularspeicher (d.h. es wird überschrieben)
- * wenn mehr wei drei Werte eingeschrieben worden sind und nicht
- * wieder ausgelesen.
- */
 class Intel4004Stack : public Intel4004StackBase {
 public:
 	/** Konstruktor */
@@ -100,4 +93,4 @@ private:
 	/** Stackspeicher */
 	UBankedAddress *stack;
 };
-#endif 
+#endif
