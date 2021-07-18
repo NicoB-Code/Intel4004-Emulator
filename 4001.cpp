@@ -1,18 +1,12 @@
-// Include local header files
-#include "4001.h"
+#include "4001.h" // local header
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-	#include "..\inc\intelhex.h"
+	#include "intelhex.h"
 #elif __unix__
-	#include "../inc/intelhex.h"
+	#include "intelhex.h"
 #endif
-
-// Include gloabl header files
-#include <cstring>
-#include <fstream>
-
-// Declaring namespaces
-using namespace std;
-
+#include <cstring> // global header
+#include <fstream> // global header
+using namespace std; // namespace
 
 Intel4001::Intel4001(const uint16_t installed_banks) : installed_banks(installed_banks), currentChip(ROMCHIP0), ROM(nullptr), INSTALLEDROM(nullptr), PORTS(nullptr) {
 
