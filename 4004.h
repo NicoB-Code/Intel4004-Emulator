@@ -6,7 +6,7 @@
 	#include "4001.h"
 	#include "4002.h"
 #elif __unix__
-	#include "../inc/MCS4BaseClasses.h"
+	#include "MCS4BaseClasses.h"
 	#include "4001.h"
 	#include "4002.h"
 #endif
