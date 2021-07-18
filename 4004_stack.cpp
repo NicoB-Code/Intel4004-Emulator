@@ -70,17 +70,17 @@ void Intel4004Stack::reset() {
 
 int Intel4004Stack::getCurrentStackPosition() const {
 	//return position;
+	return count % 3;
+}
+
+int Intel4004Stack::getCount() const {
 	if(count < 1) return 0;
 	else if(count > STACKSIZE) return STACKSIZE;
 	else return count;
 }
 
-int Intel4004Stack::getCount() const {
-	return count;
-}
-
 bool Intel4004Stack::isOverflow() const {
-	return count >= STACKSIZE;
+	return count > STACKSIZE;
 }
 
 bool Intel4004Stack::isUnderflow() const {
@@ -97,9 +97,11 @@ void Intel4004Stack::WarningCondition(const EDirection) { /* Wird bei Unter/Übe
 }
 
 /***************** Sektion UNITTEST ************************************************************************/
+//#define _UNITTEST_
 #ifdef _UNITTEST_
 
 #define CATCH_CONFIG_FAST_COMPILE
+#define CATCH_CONFIG_MAIN
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 	#include "..\inc\catch.hpp"
@@ -207,8 +209,8 @@ TEST_CASE("Stack") {
 
 		//Ein Wert wieder reinschreiben
 		stack.push(1);
-		CHECK(stack.getCount() == 1);
-		CHECK(stack.getCurrentStackPosition() == 1);
+		CHECK(stack.getCount() == 0);
+		CHECK(stack.getCurrentStackPosition() == 0);
 	}
 
 	SECTION("EnterValuesToStackMishMashNoOverflow") {
@@ -249,7 +251,6 @@ TEST_CASE("Stack") {
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
 
-		//Beschreiben
 		stack.push(1);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
@@ -276,7 +277,6 @@ TEST_CASE("Stack") {
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
 
-		//Beschreiben
 		stack.push(1);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
@@ -296,13 +296,12 @@ TEST_CASE("Stack") {
 		CHECK(stack.pop().raw == 1);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
-		CHECK(stack.pop().raw == 0);
+		CHECK(stack.pop().raw == 3);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK(stack.getReportedUnderflow());
-		CHECK(stack.pop().raw == 0);
+		CHECK(stack.pop().raw == 2);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK(stack.getReportedUnderflow());
 	}
 }
-#endif 
-
+#endif
