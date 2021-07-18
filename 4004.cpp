@@ -277,8 +277,7 @@ void Intel4004::NOP()
 void Intel4004::LDM(UCommand command)
 {
     uint4_t value = command.nibble.opa;
-    //Clear accumulator
-    accumulator = 0;
+    accumulator = 0; //Clear accumulator
     accumulator = value;
     ticks++;
 }
@@ -286,8 +285,7 @@ void Intel4004::LDM(UCommand command)
 void Intel4004::LD(UCommand command)
 {
     uint4_t registerNumber = command.nibble.opa;
-    //Clear accumulator
-    accumulator = 0;
+    accumulator = 0; //Clear accumulator
     accumulator = registers[registerNumber];
     ticks++;
 }
@@ -307,8 +305,7 @@ void Intel4004::ADD(UCommand command)
     uint4_t registerNumber = command.nibble.opa;
     accumulator = accumulator + registers[registerNumber] + carryFlag;    
     carryFlag = accumulator >> 4;
-    //reset bits 4-7
-    accumulator &= ~(0b11110000);
+    accumulator &= ~(0b11110000);  //reset bits 4-7
     ticks++;
 }
 
@@ -316,12 +313,10 @@ void Intel4004::SUB(UCommand command)
 {
     uint4_t registerNumber = command.nibble.opa;
     uint4_t registerValue = registers[registerNumber];
-    //Create ones complement
-    registerValue ^= 0b1111;
+    registerValue ^= 0b1111; //Create ones complement
     accumulator = accumulator + registerValue + !carryFlag; 
     carryFlag = accumulator >> 4;
-    //reset bits 4-7
-    accumulator &= ~(0b11110000);
+    accumulator &= ~(0b11110000); //reset bits 4-7
     ticks++;
 }
 
@@ -338,8 +333,7 @@ void Intel4004::INC(UCommand command)
 
 void Intel4004::BBL(UCommand command)
 {
-    //reset accumulator
-    accumulator = 0;
+    accumulator = 0; //reset accumulator
     accumulator = command.nibble.opa;
     PC = stack->pop();
     ticks++;
@@ -347,7 +341,6 @@ void Intel4004::BBL(UCommand command)
 
 void Intel4004::JIN(UCommand command)
 {
-    //Get the 3 bits for registerpair
     uint4_t registerPair = (command.nibble.opa >> 1) & 0b0111;
     uint8_t valueOfRegisterPair = getRegisterPair(ERegister(registerPair * 2));
     PC.banked.address = valueOfRegisterPair;
@@ -356,7 +349,6 @@ void Intel4004::JIN(UCommand command)
 
 void Intel4004::SRC(UCommand command)
 {
-    //Get the 3 bits for registerpair
     uint4_t registerPair = ((command.nibble.opa >> 1) & 0b0111) * 2;
     uint8_t valueOfRegisterPair = getRegisterPair(ERegister(registerPair));
     RAM->setCurrentChip(ERAMChip(valueOfRegisterPair >> 6));
@@ -368,7 +360,6 @@ void Intel4004::SRC(UCommand command)
 
 void Intel4004::FIN(UCommand command) //ROM-only
 {
-    //Get the 3 bits for registerpair
     uint4_t designatedRegisterPair = (command.nibble.opa >> 1) & 0b0111;
     uint8_t valueOfRegisterPair0 = getRegisterPair(ERegister(Pair_R1_R0));
     UBankedAddress address = UBankedAddress(PC.banked.bank, valueOfRegisterPair0);
@@ -414,8 +405,7 @@ void Intel4004::IAC()
 {
     accumulator++;
     carryFlag = accumulator >> 4;
-    //reset bits 4-7
-    accumulator &= ~(0b11110000);
+    accumulator &= ~(0b11110000); //reset bits 4-7
     ticks++;
 }
 
@@ -508,24 +498,6 @@ void Intel4004::KBP()
 void Intel4004::DCL()
 {
     RAM->setCurrentBank(ERAMBank(accumulator & 0b00000111));
-    //uint4_t n = (accumulator & 0b0111);
-    // if (n == 0b0000) {
-    //     RAM->setCurrentBank(BANK0);
-    // } else if (n == 0b0001) {
-    //     RAM->setCurrentBank(BANK1);
-    // } else if (n == 0b0010) {
-    //     RAM->setCurrentBank(BANK2);
-    // } else if (n == 0b0011) {
-    //     RAM->setCurrentBank(BANK3);
-    // } else if (n == 0b0100) {
-    //     RAM->setCurrentBank(BANK4);
-    // } else if (n == 0b0101) {
-    //     RAM->setCurrentBank(BANK5);
-    // } else if (n == 0b0110) {
-    //     RAM->setCurrentBank(BANK6);
-    // } else if (n == 0b0111) {
-    //     RAM->setCurrentBank(BANK7);
-    // }
     ticks++;
 }
 
@@ -593,15 +565,14 @@ void Intel4004::ISZ(UCommand byte1, UCommand byte2)
 
 void Intel4004::FIM(UCommand byte1, UCommand byte2)
 {
-    // todo vgl. mit FIN wegen ">> 1" und "*2"
-    // 14.6. changed byte1 to byte2 (+2 lines)
     uint4_t designatedRegister = ((byte1.nibble.opa >> 1) & 0b0111) * 2;
     registers[designatedRegister] = byte2.nibble.opr;
     registers[designatedRegister + 1] = byte2.nibble.opa;
     ticks = ticks + 2;
 }
 
-//RAM Instructions
+//--------  RAM Instructions ----------
+
 void Intel4004::RDM() {
     accumulator = RAM->readRAM();
     ticks++;
@@ -628,7 +599,6 @@ void Intel4004::WRn(UCommand command) {
 }
 
 void Intel4004::WPM() {
-    // No function because irrelevant
     ticks++;
 }
 
