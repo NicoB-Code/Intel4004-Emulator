@@ -31,8 +31,6 @@ void Intel4004::reset()
 	ROM->reset();
 	RAM->reset();
 	stack->reset();
-
-    // "A RESET causes DATA RAM BANK 0 to be selected" - MCS-4_Assembly_Language_Programming_Manual_Dec73.pdf, p.3-49
 }
 
 bool Intel4004::getCarry() const
@@ -101,7 +99,6 @@ void Intel4004::setTestPin(const bool value)
 
 void Intel4004::nextCommand()
 {
-    //read command from rom
     UCommand command;
     UCommand secondWord;
     command.data = ROM->read(PC);
@@ -117,7 +114,6 @@ void Intel4004::nextCommand()
         JCN(command, secondWord);
         break;
     case 0x2:
-        //if opa ist not a even number
         if(command.nibble.opa % 2)
         {
             SRC(command);
@@ -130,7 +126,6 @@ void Intel4004::nextCommand()
         }
         break;
     case 0x3:
-        //if opa ist not a even number
         if (command.nibble.opa & 1)
         {
             JIN(command);
@@ -273,7 +268,7 @@ void Intel4004::nextCommand()
     }
 }
 
-/******* Intel4004 Instructions Set **********/
+// ------------- Intel4004 Instructions --------------
 void Intel4004::NOP()
 {
     ticks++;
@@ -536,7 +531,7 @@ void Intel4004::DCL()
 
 
 
-//Two Word Machine Instruction
+// -----------  Two Word Instructions  -----------------
 
 void Intel4004::JUN(UCommand byte1, UCommand byte2)
 {
