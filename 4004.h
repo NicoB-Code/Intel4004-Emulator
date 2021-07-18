@@ -16,7 +16,8 @@ using namespace std; // namespace
 class Intel4004 : public Intel4004Base {
 public:
 	enum {
-        MAX_NUMBER_OF_REGISTERS = 16
+        MAX_NUMBER_OF_REGISTERS = 16,
+		TICKS_PER_CYCLE = 8
     };
 	/**
 	 * Konstruktor
@@ -111,13 +112,8 @@ private:
 	Intel4001 *ROM;
 	Intel4002 *RAM;
 	Intel4004Stack *stack;
-	
-	/** Intel4004 operation functions
-	 *	PC zuerst erhöhen, dann Funktion aufrufen!!
-	 * 	Bei two-word-commands liest nextCommand() beide Bytes ein und übergibt diese an die jeweilige Funtion
-	 */
 
-	 //   --------------------- One word instructions --------------------- /
+	//   --------------------- One word instructions --------------------- /
 	/**
 	 * No Operation
 	 */
