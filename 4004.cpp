@@ -3,7 +3,8 @@
 #include <cstring> // global header
 using namespace std; // namespace
 
-Intel4004::Intel4004(const uint16_t installed_ROM_Chips, const uint32_t installed_RAM_Chips){
+Intel4004::Intel4004(const uint16_t installed_ROM_Chips, const uint32_t installed_RAM_Chips)
+{
     registers = new uint4_t[MAX_NUMBER_OF_REGISTERS]();
     ROM = new Intel4001(installed_ROM_Chips);
     RAM = new Intel4002(installed_RAM_Chips);
@@ -11,14 +12,16 @@ Intel4004::Intel4004(const uint16_t installed_ROM_Chips, const uint32_t installe
     reset();
 }
 
-Intel4004::~Intel4004(){
+Intel4004::~Intel4004()
+{
     delete[] registers;
     delete ROM;
     delete RAM;
     delete stack;
 }
 
-void Intel4004::reset(){
+void Intel4004::reset()
+{
     carryFlag = 0;
 	testPin = 0;
 	accumulator = 0;
@@ -28,25 +31,32 @@ void Intel4004::reset(){
 	ROM->reset();
 	RAM->reset();
 	stack->reset();
+
+    // "A RESET causes DATA RAM BANK 0 to be selected" - MCS-4_Assembly_Language_Programming_Manual_Dec73.pdf, p.3-49
 }
 
-bool Intel4004::getCarry() const{
+bool Intel4004::getCarry() const
+{
     return carryFlag;
 }
 
-uint4_t Intel4004::getAccumulator() const{
+uint4_t Intel4004::getAccumulator() const
+{
     return accumulator;
 }
 
-UBankedAddress Intel4004::getPC() const{
+UBankedAddress Intel4004::getPC() const
+{
     return PC;
 }
 
-uint4_t Intel4004::getRegister(const ERegister reg){
+uint4_t Intel4004::getRegister(const ERegister reg)
+{
     return registers[reg];
 }
 
-uint8_t Intel4004::getRegisterPair(const ERegister reg){
+uint8_t Intel4004::getRegisterPair(const ERegister reg)
+{
     uint8_t value = 0;
     value |= registers[reg];
     value = value << 4;
@@ -54,35 +64,43 @@ uint8_t Intel4004::getRegisterPair(const ERegister reg){
     return value;
 }
 
-Intel4001Base* Intel4004::getPtrToROM(){
+Intel4001Base* Intel4004::getPtrToROM()
+{
     return ROM;
 }
 
-Intel4002Base* Intel4004::getPtrToRAM(){
+Intel4002Base* Intel4004::getPtrToRAM()
+{
     return RAM;
 }
 
-Intel4004StackBase* Intel4004::getPtrToStack(){
+Intel4004StackBase* Intel4004::getPtrToStack()
+{
     return stack;
 }
 
-uint64_t Intel4004::getTicks() const{
+uint64_t Intel4004::getTicks() const
+{
     return TICKS_PER_CYCLE * ticks;
 }
 
-void Intel4004::resetTicks(){
+void Intel4004::resetTicks()
+{
     ticks = 0;
 }
 
-bool Intel4004::getTestPin() const{
+bool Intel4004::getTestPin() const
+{
     return testPin;
 }
 
-void Intel4004::setTestPin(const bool value){
+void Intel4004::setTestPin(const bool value)
+{
     testPin = value;
 }
 
-void Intel4004::nextCommand(){
+void Intel4004::nextCommand()
+{
     //read command from rom
     UCommand command;
     UCommand secondWord;
@@ -255,12 +273,14 @@ void Intel4004::nextCommand(){
     }
 }
 
-// Mnemonics
-void Intel4004::NOP(){
+/******* Intel4004 Instructions Set **********/
+void Intel4004::NOP()
+{
     ticks++;
 }
 
-void Intel4004::LDM(UCommand command){
+void Intel4004::LDM(UCommand command)
+{
     uint4_t value = command.nibble.opa;
     //Clear accumulator
     accumulator = 0;
@@ -268,7 +288,8 @@ void Intel4004::LDM(UCommand command){
     ticks++;
 }
 
-void Intel4004::LD(UCommand command){
+void Intel4004::LD(UCommand command)
+{
     uint4_t registerNumber = command.nibble.opa;
     //Clear accumulator
     accumulator = 0;
@@ -276,7 +297,8 @@ void Intel4004::LD(UCommand command){
     ticks++;
 }
 
-void Intel4004::XCH(UCommand command){
+void Intel4004::XCH(UCommand command)
+{
     uint4_t registerNumber = command.nibble.opa;
     uint4_t temp = accumulator;
     accumulator = 0;
@@ -285,7 +307,8 @@ void Intel4004::XCH(UCommand command){
     ticks++;
 }
 
-void Intel4004::ADD(UCommand command){
+void Intel4004::ADD(UCommand command)
+{
     uint4_t registerNumber = command.nibble.opa;
     accumulator = accumulator + registers[registerNumber] + carryFlag;    
     carryFlag = accumulator >> 4;
@@ -294,7 +317,8 @@ void Intel4004::ADD(UCommand command){
     ticks++;
 }
 
-void Intel4004::SUB(UCommand command){
+void Intel4004::SUB(UCommand command)
+{
     uint4_t registerNumber = command.nibble.opa;
     uint4_t registerValue = registers[registerNumber];
     //Create ones complement
@@ -306,7 +330,8 @@ void Intel4004::SUB(UCommand command){
     ticks++;
 }
 
-void Intel4004::INC(UCommand command){
+void Intel4004::INC(UCommand command)
+{
     uint4_t registerNumber = command.nibble.opa;
     registers[registerNumber] = registers[registerNumber] + 1;
     if(registers[registerNumber] >> 4)
@@ -316,22 +341,27 @@ void Intel4004::INC(UCommand command){
     ticks++;
 }
 
-void Intel4004::BBL(UCommand command){
+void Intel4004::BBL(UCommand command)
+{
+    //reset accumulator
     accumulator = 0;
-    //reset acc
     accumulator = command.nibble.opa;
     PC = stack->pop();
     ticks++;
 }
 
-void Intel4004::JIN(UCommand command){
+void Intel4004::JIN(UCommand command)
+{
+    //Get the 3 bits for registerpair
     uint4_t registerPair = (command.nibble.opa >> 1) & 0b0111;
     uint8_t valueOfRegisterPair = getRegisterPair(ERegister(registerPair * 2));
     PC.banked.address = valueOfRegisterPair;
     ticks++;
 }
 
-void Intel4004::SRC(UCommand command){
+void Intel4004::SRC(UCommand command)
+{
+    //Get the 3 bits for registerpair
     uint4_t registerPair = ((command.nibble.opa >> 1) & 0b0111) * 2;
     uint8_t valueOfRegisterPair = getRegisterPair(ERegister(registerPair));
     RAM->setCurrentChip(ERAMChip(valueOfRegisterPair >> 6));
@@ -341,7 +371,8 @@ void Intel4004::SRC(UCommand command){
     ticks++;
 }
 
-void Intel4004::FIN(UCommand command) //ROM-only{
+void Intel4004::FIN(UCommand command) //ROM-only
+{
     //Get the 3 bits for registerpair
     uint4_t designatedRegisterPair = (command.nibble.opa >> 1) & 0b0111;
     uint8_t valueOfRegisterPair0 = getRegisterPair(ERegister(Pair_R1_R0));
@@ -352,72 +383,88 @@ void Intel4004::FIN(UCommand command) //ROM-only{
     ticks = ticks + 2;
 }
 
-void Intel4004::CLB(){
+void Intel4004::CLB()
+{
     accumulator = 0;
     carryFlag = false;
     ticks++;
 }
 
-void Intel4004::CLC(){
+void Intel4004::CLC()
+{
     carryFlag = false;
     ticks++;
 }
 
-void Intel4004::CMC(){
+void Intel4004::CMC()
+{
     carryFlag = !carryFlag;
     ticks++;
 }
 
-void Intel4004::STC(){
+void Intel4004::STC()
+{
     carryFlag = true;
     ticks++;
 }
 
-void Intel4004::CMA(){
-    accumulator ^= 0b1111;  //XOR
+void Intel4004::CMA()
+{
+    //XOR
+    accumulator ^= 0b1111;
     ticks++;
 }
 
-void Intel4004::IAC(){
+void Intel4004::IAC()
+{
     accumulator++;
     carryFlag = accumulator >> 4;
-    accumulator &= ~(0b11110000);    //reset bits 4-7
+    //reset bits 4-7
+    accumulator &= ~(0b11110000);
     ticks++;
 }
 
-void Intel4004::DAC(){
+void Intel4004::DAC()
+{
     accumulator--;
     carryFlag = !(accumulator >> 4);
-    accumulator &= ~(0b11110000);     //reset bits 4-7
+    //reset bits 4-7
+    accumulator &= ~(0b11110000);
     ticks++;
 }
 
-void Intel4004::RAL(){
+void Intel4004::RAL()
+{
     bool tempCarryFlag = carryFlag;
     carryFlag = accumulator & 0b1000;
     accumulator = accumulator << 1;
     accumulator = accumulator + tempCarryFlag;
-    accumulator &= ~(0b11110000);     //reset bits 4-7
+    //reset bits 4-7
+    accumulator &= ~(0b11110000);
     ticks++;
 }
 
-void Intel4004::RAR(){
+void Intel4004::RAR()
+{
     bool tempCarryFlag = carryFlag;
     carryFlag = accumulator & 1;
     accumulator = accumulator >> 1;
     accumulator = accumulator + (tempCarryFlag * 0b1000);
-    accumulator &= ~(0b11110000);      //reset bits 4-7
+    //reset bits 4-7
+    accumulator &= ~(0b11110000);
     ticks++;
 }
 
-void Intel4004::TCC(){
+void Intel4004::TCC()
+{
     accumulator = 0;
     accumulator = carryFlag;
     carryFlag = false;
     ticks++;
 }
 
-void Intel4004::DAA(){
+void Intel4004::DAA()
+{
     if ((accumulator > 9) or (carryFlag)) {
         accumulator += 6;
         accumulator &= ~(0b11110000);
@@ -428,7 +475,8 @@ void Intel4004::DAA(){
     ticks++;
 }
 
-void Intel4004::TCS(){
+void Intel4004::TCS()
+{
     if (carryFlag) {
         accumulator = 0b00001010;
     } else {
@@ -438,7 +486,8 @@ void Intel4004::TCS(){
     ticks++;
 }
 
-void Intel4004::KBP(){
+void Intel4004::KBP()
+{
     int count = 0;
     uint4_t n = accumulator;
     while (n) {
@@ -461,7 +510,8 @@ void Intel4004::KBP(){
     ticks++;
 }
 
-void Intel4004::DCL(){
+void Intel4004::DCL()
+{
     RAM->setCurrentBank(ERAMBank(accumulator & 0b00000111));
     //uint4_t n = (accumulator & 0b0111);
     // if (n == 0b0000) {
@@ -485,22 +535,26 @@ void Intel4004::DCL(){
 }
 
 
-//  --------------  Two Word Machine Instructions  ---------------------
 
-void Intel4004::JUN(UCommand byte1, UCommand byte2){
+//Two Word Machine Instruction
+
+void Intel4004::JUN(UCommand byte1, UCommand byte2)
+{
     PC.banked.bank = byte1.nibble.opa;
     PC.banked.address = byte2.data;
     ticks = ticks + 2;
 }
 
-void Intel4004::JMS(UCommand byte1, UCommand byte2){
+void Intel4004::JMS(UCommand byte1, UCommand byte2)
+{
     stack->push(PC);
     PC.banked.bank = byte1.nibble.opa;
     PC.banked.address = byte2.data;
     ticks = ticks + 2;
 }
 
-void Intel4004::JCN(UCommand byte1, UCommand byte2){
+void Intel4004::JCN(UCommand byte1, UCommand byte2)
+{
     uint4_t jumpCondition = byte1.nibble.opa;
     bool jumpBool = false;
     uint4_t caseAccuAndTest = 0;
@@ -533,7 +587,8 @@ void Intel4004::JCN(UCommand byte1, UCommand byte2){
     ticks = ticks + 2;
 }
 
-void Intel4004::ISZ(UCommand byte1, UCommand byte2){
+void Intel4004::ISZ(UCommand byte1, UCommand byte2)
+{
     registers[byte1.nibble.opa] = (0b1111 & (registers[byte1.nibble.opa] + 1));
     if (registers[byte1.nibble.opa] != 0){
         PC.banked.address = byte2.data;
@@ -541,7 +596,8 @@ void Intel4004::ISZ(UCommand byte1, UCommand byte2){
     ticks = ticks + 2;
 }
 
-void Intel4004::FIM(UCommand byte1, UCommand byte2){
+void Intel4004::FIM(UCommand byte1, UCommand byte2)
+{
     // todo vgl. mit FIN wegen ">> 1" und "*2"
     // 14.6. changed byte1 to byte2 (+2 lines)
     uint4_t designatedRegister = ((byte1.nibble.opa >> 1) & 0b0111) * 2;
