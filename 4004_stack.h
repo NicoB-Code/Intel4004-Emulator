@@ -1,3 +1,4 @@
+// --------------- Autoren Emulator - Damion Häberle, Lukas Adrion, Nico Bayer, Maximilian Bucher
 #ifndef _4004_STACK_H_
 #define _4004_STACK_H_
 
