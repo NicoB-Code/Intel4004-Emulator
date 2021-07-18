@@ -1,18 +1,15 @@
 #ifndef _4004_h_
 #define _4004_h_
-
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) // local header
-	#include "..\inc\MCS4BaseClasses.h"
-	#include "..\4001-ROM\4001.h"
-	#include "..\4002-RAM\4002.h"
+	#include "MCS4BaseClasses.h"
+	#include "4001.h"
+	#include "4002.h"
 #elif __unix__
 	#include "../inc/MCS4BaseClasses.h"
-	#include "../4001-ROM/4001.h"
-	#include "../4002-RAM/4002.h"
+	#include "4001.h"
+	#include "4002.h"
 #endif
-
 #include "4004_stack.h"
-
 #include <cstdint> // global header
 using namespace std; // namespace
 
