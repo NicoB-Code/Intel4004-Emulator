@@ -1,15 +1,15 @@
 #ifndef _4001_h_
 #define _4001_h_
 
-// Include local header files
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-	#include "..\inc\MCS4BaseClasses.h"
+	#include "MCS4BaseClasses.h" // local header
 #elif __unix__
-	#include "../inc/MCS4BaseClasses.h"
+	#include "MCS4BaseClasses.h"
 #endif
 
-// Declaring namespaces
-using namespace std;
+
+using namespace std; // namespaces
 
 
 class Intel4001 : public Intel4001Base {
