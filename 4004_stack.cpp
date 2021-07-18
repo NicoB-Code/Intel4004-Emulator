@@ -3,6 +3,7 @@
 #include <cstring>
 using namespace std; // namespace
 
+
 Intel4004Stack::Intel4004Stack() :
 		position(0), count(0), stack(nullptr) {
 	stack = new UBankedAddress[STACKSIZE];
@@ -95,8 +96,6 @@ UBankedAddress* Intel4004Stack::getCopyOfStack(
 
 void Intel4004Stack::WarningCondition(const EDirection) { /* Wird bei Unter/Überschreitungen aufgerufen */
 }
-
-/***************** Sektion UNITTEST ************************************************************************/
 //#define _UNITTEST_
 #ifdef _UNITTEST_
 
@@ -251,6 +250,7 @@ TEST_CASE("Stack") {
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
 
+		//Beschreiben
 		stack.push(1);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
@@ -277,6 +277,7 @@ TEST_CASE("Stack") {
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
 
+		//Beschreiben
 		stack.push(1);
 		CHECK_FALSE(stack.getReportedOverflow());
 		CHECK_FALSE(stack.getReportedUnderflow());
