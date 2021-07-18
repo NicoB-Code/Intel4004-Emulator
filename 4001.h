@@ -1,3 +1,4 @@
+// --------------- Autoren Emulator - Damion Häberle, Lukas Adrion, Nico Bayer, Maximilian Bucher
 #ifndef _4001_h_
 #define _4001_h_
 
