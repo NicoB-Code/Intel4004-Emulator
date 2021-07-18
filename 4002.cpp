@@ -1,3 +1,4 @@
+// --------------- Autoren Emulator - Damion Häberle, Lukas Adrion, Nico Bayer, Maximilian Bucher
 #include "4002.h" // local header
 #include <cstring> // global header
 using namespace std; //namespace
