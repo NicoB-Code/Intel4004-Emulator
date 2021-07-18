@@ -7,19 +7,19 @@
 #define CATCH_CONFIG_FAST_COMPILE
 #define CATCH_CONFIG_MAIN
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-	#include "..\inc\catch.hpp"
-    #include "..\4004\4004.h"
+	#include "catch.hpp"
+    #include "4004.h"
 #elif __unix__
-	#include "../inc/catch.hpp"
-    #include "../4004/4004.h"
+	#include "catch.hpp"
+    #include "4004.h"
 #endif
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    #define INTEL_HEX_FILE_PATH "..\\inc\\IntelHexFile.hex"
-    #define BINARY_FILE_PATH "..\\inc\\BinaryFile.bin"
+    #define INTEL_HEX_FILE_PATH "IntelHexFile.hex"
+    #define BINARY_FILE_PATH "BinaryFile.bin"
 #elif __unix__
-    #define INTEL_HEX_FILE_PATH "../inc/IntelHexFile.hex"
-    #define BINARY_FILE_PATH "../inc/BinaryFile.bin"
+    #define INTEL_HEX_FILE_PATH "IntelHexFile.hex"
+    #define BINARY_FILE_PATH "BinaryFile.bin"
 #endif
 
 #include <cstdint>
