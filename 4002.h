@@ -2,11 +2,10 @@
 #define _4002_h_
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) // local header
-	#include "..\inc\MCS4BaseClasses.h"
+	#include "MCS4BaseClasses.h"
 #elif __unix__
-	#include "../inc/MCS4BaseClasses.h"
+	#include "MCS4BaseClasses.h"
 #endif
-
 #include <cstdint> // global header
 using namespace std; //namespace
 
@@ -174,4 +173,4 @@ private:
 	uint4_t **RAMPort;
 	bool **INSTALLEDRAM;
 };
-#endif // _4002_h_
+#endif
